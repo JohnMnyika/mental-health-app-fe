@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function LoginScreen({ navigation }) {
+export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    // Add login logic here
-    navigation.navigate('Profile');
-  };
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = () => {
-    navigation.navigate('Register');
+    // Add registration logic here
+    navigation.navigate('Login');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
+      <Text style={styles.title}>Register</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -30,11 +27,18 @@ export default function LoginScreen({ navigation }) {
         value={password}
         onChangeText={setPassword}
       />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Log In</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registerLink} onPress={handleRegister}>
-        <Text style={styles.registerText}>Don't have an account? Register here</Text>
+      <TouchableOpacity style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginText}>Already have an account? Log In</Text>
       </TouchableOpacity>
     </View>
   );
@@ -75,10 +79,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  registerLink: {
+  loginLink: {
     marginTop: 10,
   },
-  registerText: {
+  loginText: {
     color: '#007BFF',
     fontSize: 16,
     fontWeight: 'bold',
