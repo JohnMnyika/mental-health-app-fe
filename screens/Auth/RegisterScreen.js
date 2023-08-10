@@ -1,42 +1,64 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { Formik } from 'formik';
+import * as yup from 'yup';
+
+const validationSchema = yup.object().shape({
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+  confirmPassword: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match').required('Confirm Password is required'),
+});
 
 export default function RegisterScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  const handleRegister = () => {
-    // Add registration logic here
+  const handleRegister = (values) => {
+    console.log(values);
     navigation.navigate('Login');
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
+      <Formik
+        initialValues={{ email: '', password: '', confirmPassword: '' }}
+        validationSchema={validationSchema}
+        onSubmit={handleRegister}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              value={values.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              value={values.password}
+            />
+            {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              secureTextEntry
+              onChangeText={handleChange('confirmPassword')}
+              onBlur={handleBlur('confirmPassword')}
+              value={values.confirmPassword}
+            />
+            {touched.confirmPassword && errors.confirmPassword && <Text style={styles.error}>{errors.confirmPassword}</Text>}
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <Text style={styles.buttonText}>Register</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </Formik>
       <TouchableOpacity style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.loginText}>Already have an account? Log In</Text>
       </TouchableOpacity>
@@ -86,6 +108,11 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  error: {
+    color: 'red',
+    marginBottom: 5,
     textAlign: 'center',
   },
 });
